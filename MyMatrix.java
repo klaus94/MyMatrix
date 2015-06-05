@@ -17,13 +17,13 @@ public class MyMatrix<T> implements Matrix<T>
 
 		for (Point p: matrixEntries.keySet())
 		{
-			if (p.y > biggestRowCount)
+			if (p.x > biggestRowCount)
 			{
-				biggestRowCount = p.y;
+				biggestRowCount = p.x;
 			}
 		}
 
-		return biggestRowCount;
+		return biggestRowCount + 1;		// because counting starts with 0
 	}
 
 
@@ -33,13 +33,13 @@ public class MyMatrix<T> implements Matrix<T>
 
 		for (Point p: matrixEntries.keySet())
 		{
-			if (p.x > biggestColCount)
+			if (p.y > biggestColCount)
 			{
-				biggestColCount = p.x;
+				biggestColCount = p.y;
 			}
 		}
 
-		return biggestColCount;
+		return biggestColCount + 1;		// because counting starts with 0
 	}
 
 
@@ -75,7 +75,8 @@ public class MyMatrix<T> implements Matrix<T>
 			result = matrixEntries.get(new Point(row, col));
 			
 
-			// vorerst nur einfache Schritte. null wird noch nicht herausgefiltert.
+			// test
+			// nächstes feld (anhand von row und col):
 			if (row < MyMatrix.this.getRowCount() - 1)
 			{
 				row += 1;		// eine Zeile tiefer gehen
@@ -85,13 +86,49 @@ public class MyMatrix<T> implements Matrix<T>
 				col += 1;		// neue Spalte anfangen
 				row = 0;
 			}
+			// überspringe alle null(en):
+			while ( (MyMatrix.this.get(row, col) == null) || (row != MyMatrix.this.getRowCount() - 1) || (col != MyMatrix.this.getColumnCount() - 1) )
+			{
+				if (row < MyMatrix.this.getRowCount() - 1)
+				{
+					row += 1;		// eine Zeile tiefer gehen
+				}
+				else
+				{
+					col += 1;		// neue Spalte anfangen
+					row = 0;
+				}
+			}
+			// test end
+
+			// vorerst nur einfache Schritte. null wird noch nicht herausgefiltert.
+			/*if (row < MyMatrix.this.getRowCount() - 1)
+			{
+				row += 1;		// eine Zeile tiefer gehen
+			}
+			else
+			{
+				col += 1;		// neue Spalte anfangen
+				row = 0;
+			}*/
 			
 			return result;
 		}
 
 		public boolean hasNext()
 		{
-			return (row != MyMatrix.this.getRowCount() - 1) && (col != MyMatrix.this.getColumnCount() - 1);
+			int testRow = row;
+
+			while (MyMatrix.this.get(testRow, col) == null)
+			{
+				if (row == MyMatrix.this.getRowCount() - 1)
+				{
+					return false;
+				}
+				testRow++;
+			}
+			//return (row != MyMatrix.this.getRowCount() - 1) && (col != MyMatrix.this.getColumnCount() - 1);
+			return true;
 		}
 
 		public void remove() 
@@ -111,7 +148,8 @@ public class MyMatrix<T> implements Matrix<T>
 		Point positionRequest = new Point(row, column);
 		T entry = matrixEntries.get(positionRequest);
 
-		if (entry == null)
+
+		if ( (row > this.getRowCount() - 1) || (column > this.getColumnCount() - 1) )
 		{
 			throw new IllegalArgumentException("achtung achtung");
 		}

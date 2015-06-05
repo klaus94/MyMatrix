@@ -17,8 +17,15 @@ public class MatrixTest
 		m.put(2,0,a);
 		System.out.println("3 werte eingefügt");
 
-		Iterator it = m.iterator();
-		while (it.hasNext())
+		// teste 		
+		System.out.println("RowCount: " + m.getRowCount());
+		System.out.println("ColCount: " + m.getColumnCount());
+		System.out.println("ObjectCount: " + m.getObjectCount());
+		System.out.println("DistinctObjectCount: " + m.getDistinctObjectCount());
+
+
+		System.out.println("aufzählung startet jetzt:");
+		Iterator it = m.iterator();		while (it.hasNext())
 		{
 			output = it.next();
 			if (output == null)
