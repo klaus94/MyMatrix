@@ -17,9 +17,9 @@ public class MyMatrix<T> implements Matrix<T>
 
 		for (Point p: matrixEntries.keySet())
 		{
-			if (p.x > biggestRowCount)
+			if (p.y > biggestRowCount)
 			{
-				biggestRowCount = p.x;
+				biggestRowCount = p.y;
 			}
 		}
 
@@ -33,9 +33,9 @@ public class MyMatrix<T> implements Matrix<T>
 
 		for (Point p: matrixEntries.keySet())
 		{
-			if (p.y > biggestColCount)
+			if (p.x > biggestColCount)
 			{
-				biggestColCount = p.y;
+				biggestColCount = p.x;
 			}
 		}
 
@@ -66,69 +66,68 @@ public class MyMatrix<T> implements Matrix<T>
 	{
 		private int row = 0;
 		private int col = 0;
-		private T next = matrixEntries.get(new Point(0,0));
+		private T next;// = matrixEntries.get(new Point(0,0));
+
+		public DepthFirstIterator()
+		{
+			while (matrixEntries.get(new Point(col, row)) == null)
+			{
+				if (row < MyMatrix.this.getRowCount() - 1)
+				{
+					row += 1;
+				}
+				else
+				{
+					col += 1;
+					row = 0;
+				}
+			}
+			next = matrixEntries.get(new Point(col, row));
+			//System.out.println("first element: " + next + " at ("+ col + "/" + row + ")");
+		}
 
 		public T next()
 		{
 			T result;
 
-			result = matrixEntries.get(new Point(row, col));
-			
+			result = next;
 
-			// test
-			// nächstes feld (anhand von row und col):
+			// ein feld weiter rücken
 			if (row < MyMatrix.this.getRowCount() - 1)
 			{
-				row += 1;		// eine Zeile tiefer gehen
+				row += 1;
 			}
 			else
 			{
-				col += 1;		// neue Spalte anfangen
+				col += 1;
 				row = 0;
 			}
-			// überspringe alle null(en):
-			while ( (MyMatrix.this.get(row, col) == null) || (row != MyMatrix.this.getRowCount() - 1) || (col != MyMatrix.this.getColumnCount() - 1) )
+
+			// suche nach nächstem element in der matrix
+			while ( (MyMatrix.this.get(row, col) == null) && (col != MyMatrix.this.getColumnCount() - 1) )
 			{
+				//System.out.println("MyMatrix.this.get("+col+", "+row+"): " + MyMatrix.this.get(row, col));
 				if (row < MyMatrix.this.getRowCount() - 1)
 				{
-					row += 1;		// eine Zeile tiefer gehen
+					row += 1;
 				}
 				else
 				{
-					col += 1;		// neue Spalte anfangen
+					col += 1;
 					row = 0;
 				}
+				//System.out.println("new = (col " + col + " row " + row + ")");
 			}
-			// test end
 
-			// vorerst nur einfache Schritte. null wird noch nicht herausgefiltert.
-			/*if (row < MyMatrix.this.getRowCount() - 1)
-			{
-				row += 1;		// eine Zeile tiefer gehen
-			}
-			else
-			{
-				col += 1;		// neue Spalte anfangen
-				row = 0;
-			}*/
-			
+			next = matrixEntries.get(new Point(col, row));
+
 			return result;
+
 		}
 
 		public boolean hasNext()
 		{
-			int testRow = row;
-
-			while (MyMatrix.this.get(testRow, col) == null)
-			{
-				if (row == MyMatrix.this.getRowCount() - 1)
-				{
-					return false;
-				}
-				testRow++;
-			}
-			//return (row != MyMatrix.this.getRowCount() - 1) && (col != MyMatrix.this.getColumnCount() - 1);
-			return true;
+			return next != null;
 		}
 
 		public void remove() 
@@ -143,13 +142,13 @@ public class MyMatrix<T> implements Matrix<T>
 	}
 
 
+	// ACHTUNG: get(row, column)  <-> matrixEntries.get(new Point(col, row)) !!!
 	public T get(int row, int column)
 	{
-		Point positionRequest = new Point(row, column);
+		Point positionRequest = new Point(column, row);
 		T entry = matrixEntries.get(positionRequest);
-
-
-		if ( (row > this.getRowCount() - 1) || (column > this.getColumnCount() - 1) )
+ 
+		if ( (row > this.getRowCount()) || (column > this.getColumnCount()) )
 		{
 			throw new IllegalArgumentException("achtung achtung");
 		}
@@ -160,7 +159,7 @@ public class MyMatrix<T> implements Matrix<T>
 
 	public T put (int row, int column, T value)
 	{
-		Point positionRequest = new Point(row, column);
+		Point positionRequest = new Point(column, row);
 		T lastValue;
 		
 		lastValue = matrixEntries.get(positionRequest);		// returns null, if not existing

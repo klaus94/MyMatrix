@@ -9,12 +9,10 @@ public class MatrixTest
 
 		Matrix<String> m = new MyMatrix<String>();
 		System.out.println("feld erstellt");
-		String a = "a";
-		String b = "b";
 
-		m.put(0,1,a);
-		m.put(1,3,b);
-		m.put(2,0,a);
+		m.put(0,1,"a2");
+		m.put(1,3,"b");
+		m.put(2,0,"a1");
 		System.out.println("3 werte eingefügt");
 
 		// teste 		
@@ -23,19 +21,18 @@ public class MatrixTest
 		System.out.println("ObjectCount: " + m.getObjectCount());
 		System.out.println("DistinctObjectCount: " + m.getDistinctObjectCount());
 
+		System.out.println("get(2, 0): " + m.get(2, 0));		// a1
+		System.out.println("get(1, 2): " + m.get(1, 2));		// null
 
-		System.out.println("aufzählung startet jetzt:");
-		Iterator it = m.iterator();		while (it.hasNext())
+
+		Iterator it = m.iterator();		
+
+		System.out.println("iterate through matrix:");
+		while (it.hasNext())													// TODO: wo ist das b???
 		{
+			//System.out.println("next()");
 			output = it.next();
-			if (output == null)
-			{
-				System.out.println("null");
-			}
-			else
-			{
-				System.out.println((String)output);	
-			}
+			System.out.println((String)output);
 		}
 	}
 
