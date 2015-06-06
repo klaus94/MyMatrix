@@ -17,9 +17,9 @@ public class MyMatrix<T> implements Matrix<T>
 
 		for (Point p: matrixEntries.keySet())
 		{
-			if (p.y > biggestRowCount)
+			if (p.x > biggestRowCount)
 			{
-				biggestRowCount = p.y;
+				biggestRowCount = p.x;
 			}
 		}
 
@@ -33,9 +33,9 @@ public class MyMatrix<T> implements Matrix<T>
 
 		for (Point p: matrixEntries.keySet())
 		{
-			if (p.x > biggestColCount)
+			if (p.y > biggestColCount)
 			{
-				biggestColCount = p.x;
+				biggestColCount = p.y;
 			}
 		}
 
@@ -45,7 +45,7 @@ public class MyMatrix<T> implements Matrix<T>
 
 	public int getObjectCount()
 	{
-		return matrixEntries.values().size();		// evt auf null prüfen ???
+		return matrixEntries.values().size();
 	}
 
 
@@ -62,15 +62,15 @@ public class MyMatrix<T> implements Matrix<T>
 	}
 
 
-	private class DepthFirstIterator implements Iterator<T>
+	public class DepthFirstIterator implements Iterator<T>
 	{
 		private int row = 0;
 		private int col = 0;
-		private T next;// = matrixEntries.get(new Point(0,0));
+		private T next;
 
 		public DepthFirstIterator()
 		{
-			while (matrixEntries.get(new Point(col, row)) == null)
+			while (matrixEntries.get(new Point(row, col)) == null)
 			{
 				if (row < MyMatrix.this.getRowCount() - 1)
 				{
@@ -82,8 +82,7 @@ public class MyMatrix<T> implements Matrix<T>
 					row = 0;
 				}
 			}
-			next = matrixEntries.get(new Point(col, row));
-			//System.out.println("first element: " + next + " at ("+ col + "/" + row + ")");
+			next = matrixEntries.get(new Point(row, col));
 		}
 
 		public T next()
@@ -92,7 +91,7 @@ public class MyMatrix<T> implements Matrix<T>
 
 			result = next;
 
-			// ein feld weiter rücken
+			// go one field further
 			if (row < MyMatrix.this.getRowCount() - 1)
 			{
 				row += 1;
@@ -103,10 +102,9 @@ public class MyMatrix<T> implements Matrix<T>
 				row = 0;
 			}
 
-			// suche nach nächstem element in der matrix
-			while ( (MyMatrix.this.get(row, col) == null) && (col != MyMatrix.this.getColumnCount() - 1) )
+			// search next element in matrix
+			while (  (col < MyMatrix.this.getColumnCount()) && (MyMatrix.this.get(row, col) == null) )		// test first, if position is in bounds, after that test null
 			{
-				//System.out.println("MyMatrix.this.get("+col+", "+row+"): " + MyMatrix.this.get(row, col));
 				if (row < MyMatrix.this.getRowCount() - 1)
 				{
 					row += 1;
@@ -116,10 +114,9 @@ public class MyMatrix<T> implements Matrix<T>
 					col += 1;
 					row = 0;
 				}
-				//System.out.println("new = (col " + col + " row " + row + ")");
 			}
 
-			next = matrixEntries.get(new Point(col, row));
+			next = matrixEntries.get(new Point(row, col));	
 
 			return result;
 
@@ -142,13 +139,13 @@ public class MyMatrix<T> implements Matrix<T>
 	}
 
 
-	// ACHTUNG: get(row, column)  <-> matrixEntries.get(new Point(col, row)) !!!
 	public T get(int row, int column)
 	{
-		Point positionRequest = new Point(column, row);
+		Point positionRequest = new Point(row, column);
 		T entry = matrixEntries.get(positionRequest);
  
-		if ( (row > this.getRowCount()) || (column > this.getColumnCount()) )
+		// if requested row or col is out of bounds, throw exception
+		if ( (row >= this.getRowCount()) || (column >= this.getColumnCount()) )		// <= and >= because counting starts with 0
 		{
 			throw new IllegalArgumentException("achtung achtung");
 		}
@@ -159,11 +156,10 @@ public class MyMatrix<T> implements Matrix<T>
 
 	public T put (int row, int column, T value)
 	{
-		Point positionRequest = new Point(column, row);
+		Point positionRequest = new Point(row, column);
 		T lastValue;
 		
 		lastValue = matrixEntries.get(positionRequest);		// returns null, if not existing
-		
 		matrixEntries.put(positionRequest, value);
 
 		return lastValue;
