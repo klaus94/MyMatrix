@@ -23,7 +23,12 @@ public class MyMatrix<T> implements Matrix<T>
 			}
 		}
 
-		return biggestRowCount + 1;		// because counting starts with 0
+		if (matrixEntries.size() != 0)
+		{
+			biggestRowCount += 1;
+		}
+
+		return biggestRowCount;		// because counting starts with 0
 	}
 
 
@@ -39,7 +44,12 @@ public class MyMatrix<T> implements Matrix<T>
 			}
 		}
 
-		return biggestColCount + 1;		// because counting starts with 0
+		if (matrixEntries.size() != 0)
+		{
+			biggestColCount += 1;
+		}
+
+		return biggestColCount;		// because counting starts with 0
 	}
 
 
