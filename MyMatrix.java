@@ -101,6 +101,10 @@ public class MyMatrix<T> implements Matrix<T>
 
 			result = next;
 
+			if (hasNext() == false) {
+				throw new NoSuchElementException("gibts net");
+			}
+
 			// go one field further
 			if (row < MyMatrix.this.getRowCount() - 1)
 			{
